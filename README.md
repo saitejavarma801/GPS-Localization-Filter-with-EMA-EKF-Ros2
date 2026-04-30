@@ -1,12 +1,21 @@
-# GPS EMA Filter — ROS2 Package
-
-A ROS2 package implementing a multi-stage GPS filtering and heading fusion pipeline for robust outdoor autonomous navigation.
+# GPS EMA Filter,Motion Consistency & EKF — ROS2 Package
+A multi-stage GPS filtering and sensor fusion pipeline for outdoor autonomous navigation.
+This package combines adaptive EMA smoothing, motion consistency validation, and EKF-based sensor fusion to produce reliable position and heading estimates for robotic systems.
 
 ---
 
 ## Overview
 
-Raw GPS signals are noisy, jumpy, and unreliable at low speeds. This package chains four nodes to produce clean, validated position and fused heading estimates suitable for navigation stacks like Nav2 or robot_localization EKF.
+Raw GPS signals are inherently noisy, prone to spikes, and unreliable at low speeds.
+This package improves GPS reliability through a layered filtering architecture:
+
+- Noise reduction using adaptive EMA
+
+- Outlier rejection using motion consistency checks
+
+- Accurate heading estimation using EKF fusion (IMU + GPS)
+
+- Automatic magnetic declination correction
 
 ```
 /fix  (raw GPS)
