@@ -31,126 +31,55 @@ This package improves GPS reliability through a layered filtering architecture:
 The system is structured into modular ROS 2 nodes, each responsible for a specific stage of filtering and validation.
 
 # Nodes
-ema_filter_node — Adaptive GPS Smoothing
-Applies an adaptive Exponential Moving Average (EMA) filter to raw GPS data.
-# Key Features:
+# Ema filter Node
+Subscribes to raw /fix and applies an adaptive EMA (Exponential Moving Average) filter.
 
+Alpha adapts based on HDOP and estimated speed
 
-1.Dynamic smoothing factor (α):
+1.High HDOP → α = 0.05 (heavy smoothing)
 
+2.Stationary → α = 0.1
 
-2.High HDOP → α = 0.05
+3.Moving → α = 0.4
 
 
-3.Stationary → α = 0.1
+4.Publishes smoothed fix to /gps/filtered
 
+5.Publishes HDOP + speed debug info to /localization/status
 
-4.Moving → α = 0.4
+----
+# Motion Filter Node
+Validates EMA-filtered GPS using motion consistency checks.
 
+1.Rejects fixes with speed > 5 m/s (outlier spike)
 
+2.Rejects fixes where GPS shows motion but odometry (/odom) says robot is stationary
 
+3.Rejects fixes with acceleration > 2 m/s²
 
-Reduces jitter while preserving responsiveness
+4.Rejects fixes with heading change > 45° between consecutive samples
 
+5.Publishes validated fixes to /gps/validated
 
-Publishes filtered GPS data
+# Heading Kalman Fusion
+Fuses IMU yaw and GPS-derived heading using a 1D Kalman filter.
 
+1.Prediction step driven by IMU at high rate
+2.GPS update applied only when speed > 0.5 m/s (heading is unreliable at rest)
+3.Handles angle wraparound correctly using (angle + π) % 2π - π
+4.Publishes fused IMU to /imu/fused
 
-# Topics:
+# Mag Declination Updater
+One-shot node that auto-computes and applies magnetic declination.
 
+1.Waits for first valid /gps/validated fix
+2.Uses the geomag WMM library to compute declination at the robot's location
+3.Calls set_parameters service on /navsat_raw and /navsat_filtered nodes
+4.Shuts down cleanly after applying
 
-Subscribes: /fix
 
-
-Publishes:
-
-
-/gps/filtered
-
-
-/localization/status (HDOP, speed debug info)
-
-
-
----
-
-# Motion Filter Node — Motion Consistency Validation
-
-Validates filtered GPS data using physical motion constraints.
-
-# Validation Rules:
-
-
-1.Rejects speed spikes greater than 5 m/s
-
-
-2.Rejects GPS motion when odometry indicates stationary
-
-
-3.Rejects acceleration greater than 2 m/s²
-
-
-4.Rejects heading changes greater than 45°
-
-
-# Purpose:
-
-
-Eliminates GPS outliers and multipath errors
-
-
-Ensures only reliable data is used downstream
-
-
-# Topics:
-
-
-Subscribes: /gps/filtered, /odom
-
-
-Publishes: /gps/validated
-
-
----
-# Ekf fusion_node — Sensor Fusion (IMU + GPS)
-Fuses IMU orientation and GPS-derived heading using an Extended Kalman Filter (EKF).
-# Key Features:
-
-
-1.Combines high-frequency IMU data with GPS corrections
-
-
-2.GPS updates applied only when speed is greater than 0.5 m/s
-
-
-3.Handles angle wrapping correctly
-
-
-4.Produces stable, drift-resistant heading estimates
-
-
-# Topics:
-
-
-Subscribes: /imu, /gps/validated
-
-
-Publishes: /imu/fused
-
-
-
-# Mag declination updater — Magnetic Declination Correction
-Automatically computes and applies magnetic declination based on location.
-# Key Features:
-
-
-1.Uses the geomag library (WMM model)
-
-
-2.Updates parameters in NavSat nodes
-
-
-3.Executes once and exits cleanly
+Topics
+TopicTypeDirection/fixsensor_msgs/NavSatFixInput (raw GPS)/imusensor_msgs/ImuInput (raw IMU)/odomnav_msgs/OdometryInput (wheel odometry)/gps/filteredsensor_msgs/NavSatFixEMA output/gps/validatedsensor_msgs/NavSatFixMotion-validated output/imu/fusedsensor_msgs/ImuHeading-fused IMU output/localization/statusstd_msgs/StringDebug JSON (HDOP, speed)
 
 
 
