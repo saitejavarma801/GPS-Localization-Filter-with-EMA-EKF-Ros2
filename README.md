@@ -25,7 +25,7 @@ This package improves GPS reliability through a layered filtering architecture:
               ├─► [ekf_fusion_node] + /imu   → /imu/fused
               └─► [mag_declination_updater]
 
-
+----
 # System Architecture
 
 The system is structured into modular ROS 2 nodes, each responsible for a specific stage of filtering and validation.
@@ -36,16 +36,16 @@ Applies an adaptive Exponential Moving Average (EMA) filter to raw GPS data.
 # Key Features:
 
 
-Dynamic smoothing factor (α):
+1.Dynamic smoothing factor (α):
 
 
-High HDOP → α = 0.05
+2.High HDOP → α = 0.05
 
 
-Stationary → α = 0.1
+3.Stationary → α = 0.1
 
 
-Moving → α = 0.4
+4.Moving → α = 0.4
 
 
 
@@ -72,7 +72,7 @@ Publishes:
 
 
 
-
+---
 
 # Motion Filter Node — Motion Consistency Validation
 
@@ -81,16 +81,16 @@ Validates filtered GPS data using physical motion constraints.
 # Validation Rules:
 
 
-Rejects speed spikes greater than 5 m/s
+1.Rejects speed spikes greater than 5 m/s
 
 
-Rejects GPS motion when odometry indicates stationary
+2.Rejects GPS motion when odometry indicates stationary
 
 
-Rejects acceleration greater than 2 m/s²
+3.Rejects acceleration greater than 2 m/s²
 
 
-Rejects heading changes greater than 45°
+4.Rejects heading changes greater than 45°
 
 
 # Purpose:
@@ -111,22 +111,22 @@ Subscribes: /gps/filtered, /odom
 Publishes: /gps/validated
 
 
-
+---
 # Ekf fusion_node — Sensor Fusion (IMU + GPS)
 Fuses IMU orientation and GPS-derived heading using an Extended Kalman Filter (EKF).
 # Key Features:
 
 
-Combines high-frequency IMU data with GPS corrections
+1.Combines high-frequency IMU data with GPS corrections
 
 
-GPS updates applied only when speed is greater than 0.5 m/s
+2.GPS updates applied only when speed is greater than 0.5 m/s
 
 
-Handles angle wrapping correctly
+3.Handles angle wrapping correctly
 
 
-Produces stable, drift-resistant heading estimates
+4.Produces stable, drift-resistant heading estimates
 
 
 # Topics:
@@ -144,13 +144,13 @@ Automatically computes and applies magnetic declination based on location.
 # Key Features:
 
 
-Uses the geomag library (WMM model)
+1.Uses the geomag library (WMM model)
 
 
-Updates parameters in NavSat nodes
+2.Updates parameters in NavSat nodes
 
 
-Executes once and exits cleanly
+3.Executes once and exits cleanly
 
 
 
@@ -173,23 +173,23 @@ Executes once and exits cleanly
 # Key Advantages
 
 
-Robust against GPS noise and spikes
+1.Robust against GPS noise and spikes
 
 
-Reliable performance at low speeds
+2.Reliable performance at low speeds
 
 
-Improved heading accuracy through sensor fusion
+3.Improved heading accuracy through sensor fusion
 
 
-Modular and lightweight design
+4.Modular and lightweight design
 
 
 
 
 
-Part Of
-OutdoorNav — a ROS 2-based outdoor autonomous navigation system.
+# Part of
+OutNav — a ROS 2-based outdoor autonomous navigation system for Mobile Robot.
 
 
 # MIT License
