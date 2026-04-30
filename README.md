@@ -95,9 +95,8 @@ pip install geomag
 ## Build & Run
 
 ```bash
-# Clone into your ROS2 workspace src/
-cd ~/your_ws/src
-git clone https://github.com/<your-username>/gps_ema_filter.git
+
+git clone https://github.com/saitejavarma801/gps_fil_ws
 
 # Build
 cd ~/your_ws
@@ -110,16 +109,23 @@ ros2 launch gps_ema_filter gps_with_ema.launch.py
 
 ---
 
-## Tested On
-
-- ROS2 Humble
-- Ubuntu 22.04
-- NVIDIA Jetson AGX Orin
-- u-blox GPS module
-- MPU-9250 / compatible IMU
-
----
 
 ## Part Of
 
-OutdoorNav — a ROS2-based waypoint-driven autonomous outdoor navigation stack.
+OutNav — a ROS2-based waypoint-driven autonomous outdoor navigation stack.
+
+
+# MIT License
+
+Copyright (c) 2026 SAI TEJA VARMA
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
